@@ -85,7 +85,7 @@ pip install -r requirements.txt
 Import the required functions from the repository and use them as needed in your Python scripts.
 
 ```python
-from runge_kutta import rk4, rk4u, rkf45
+from myfunctions import rk4, rk4u, rkf45
 
 # Example usage
 t, x = rk4(f, x0, t0, tf, h)

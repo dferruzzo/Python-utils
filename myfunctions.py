@@ -1,3 +1,29 @@
+import numpy as np
+
+def rk4_err_tol(f,x0,t0,tf,h, tol):
+    x_ref = x0
+
+    t = t0
+    x = x0
+    
+    t_plus = t0
+    
+    while (abs(t_plus-tf)>h):
+    
+        t_plus, x_plus = rk4_um_passo(f,x0,t0,h)
+    
+        t = np.append(t, t_plus)
+        x = np.vstack((x, x_plus))
+        x0 = x_plus
+        t0 = t_plus
+        
+        if (abs(np.linalg.norm(x_ref) - np.linalg.norm(x_plus))<=tol):
+            return t, x
+        x_ref = x_plus
+        
+    print('max time reached!')
+    return t,x
+
 def rk4_um_passo(f,x,t,h):
     # Implementa o algoritmo Runge-Kutta de 4ta ordem
     # dotx = f(t,x)
@@ -22,36 +48,6 @@ def rk4_um_passo(f,x,t,h):
     t_out = t+h
     return t_out, x_out
 
-def rk4u(f,x0,t0,tf,h, gfunc, m):
-    # Implementa o algoritmo Runge-Kutta de 4ta ordem
-    # dotx = f(t,x,u)
-    # x0 = numpy.array([x1,...,xn]),
-    # t0 : tempo inicial
-    # tf : tempo final
-    # h : passo de integração
-    # as saídas são:
-    # t : o vetor tempo 
-    # x : o vetor de estados
-    # 
-    # gfunc é a função de controle
-    # m é o número de entradas de controle
-    from numpy import zeros, absolute, floor
-    N = absolute(floor((tf-t0)/h)).astype(int)
-    x = zeros((N+1, x0.size))
-    t = zeros(N+1)
-    u = zeros((N+1, m))
-    x[0, :] = x0
-    t[0] = t0
-    for i in range(0, N):
-        k1 = f(t[i], x[i,:])
-        k2 = f(t[i]+h/2, x[i,:]+(h*k1)/2)
-        k3 = f(t[i]+h/2, x[i,:]+(h*k2)/2)
-        k4 = f(t[i]+h, x[i,:]+h*k3)
-        x[i+1, :] = x[i, :]+(h/6)*(k1+2*k2+2*k3+k4)
-        t[i+1] = t[i]+h
-        u[i+1,:] = gfunc(t[i], x[i,:])
-    return t, x, u
-
 def rk4(f,x0,t0,tf,h):
     # Implementa o algoritmo Runge-Kutta de 4ta ordem
     # dotx = f(t,x)
@@ -64,17 +60,17 @@ def rk4(f,x0,t0,tf,h):
     # x : o vetor de estados
     from numpy import zeros, absolute, floor
     N = absolute(floor((tf-t0)/h)).astype(int)
-    x = zeros((N+1, x0.size))
+    x = zeros((N+1,x0.size))
     t = zeros(N+1)
-    x[0, :] = x0
+    x[0,:] = x0
     t[0] = t0
-    for i in range(0, N):
-        k1 = f(t[i], x[i])
-        k2 = f(t[i]+h/2, x[i]+(h*k1)/2)
-        k3 = f(t[i]+h/2, x[i]+(h*k2)/2)
-        k4 = f(t[i]+h, x[i]+h*k3)
-        x[i+1, :] = x[i, :]+(h/6)*(k1+2*k2+2*k3+k4)
-        t[i+1] = t[i]+h
+    for i in range(0,N):
+        k1 = f(t[i],x[i])
+        k2 = f(t[i]+h/2,x[i]+(h*k1)/2)
+        k3 = f(t[i]+h/2,x[i]+(h*k2)/2)
+        k4 = f(t[i]+h,x[i]+h*k3)
+        x[i+1,:] = x[i,:]+(h/6)*(k1+2*k2+2*k3+k4)
+        t[i+1]=t[i]+h
     return t, x
 #
 def rkf45a(f,a,b,ya,M,tol):
@@ -772,4 +768,4 @@ def lqr_regulador_1(A, B, Q, R, h, t0, tf, dt, x0, message=False):
         myprint('\nCalculando o valor do funcional', message)
         myprint('J =', message)
         myprint(J, message)
-        return t, x, p, u, Kout, g, H, J
+        return t, x, p, u, Kout, g, H, Js

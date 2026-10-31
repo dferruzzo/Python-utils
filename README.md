@@ -91,6 +91,29 @@ from myfunctions import rk4, rk4u, rkf45
 t, x = rk4(f, x0, t0, tf, h)
 ```
 
+## Example: `test2.py`
+
+`test2.py` simulates an unforced mass-spring-damper system using the fixed-step
+`rk4` and `rk45` implementations in `runge_kutta.py`. The modeled equation is:
+
+```text
+m x'' + c x' + k x = 0
+```
+
+The state is `[x, v]`, where `x` is position and `v` is velocity. The example
+uses `k = 1.0`, `m = 1.0`, `c = 0.1`, initial state `[1.0, 0.0]`, a time range
+from `0` to `20` seconds, and a step size of `0.001` seconds.
+
+Run it from the repository root:
+
+```bash
+python test2.py
+```
+
+The script prints the trajectories produced by both methods, checks whether
+they agree within an absolute tolerance of `1e-5`, and displays plots of the
+position and RK45 local-error estimate. It requires `numpy` and `matplotlib`.
+
 ## License
 
 This project is licensed under the MIT License.
